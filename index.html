@@ -15,18 +15,18 @@
   <!-- Importando o Babel para rodar JSX no navegador -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Estilos Customizados -->
+  <!-- Estilos Customizados de Animação e Brilho -->
   <style>
-    @keyframes pulse-subtle {
-      0%, 100% { border-color: rgba(248, 113, 113, 0.4); background-color: rgba(254, 226, 226, 0.4); }
-      50% { border-color: rgba(239, 68, 68, 1); background-color: rgba(254, 226, 226, 0.8); }
+    @keyframes subtle-glow {
+      0%, 100% { box-shadow: 0 4px 20px rgba(10, 102, 194, 0.05); }
+      50% { box-shadow: 0 4px 25px rgba(10, 102, 194, 0.15); }
     }
-    .animate-pulse-subtle { 
-      animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; 
+    .animate-glow { 
+      animation: subtle-glow 4s ease-in-out infinite; 
     }
   </style>
 </head>
-<body class="bg-[#f3f2ef]">
+<body class="bg-gradient-to-br from-[#f4f7fa] via-[#edf2f7] to-[#f4f7fa] min-h-screen text-slate-800 antialiased">
 
   <!-- Elemento onde o React será montado -->
   <div id="root"></div>
@@ -35,6 +35,7 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
+    // --- ÍCONES SVG ---
     const AlertCircle = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
     const CheckCircle2 = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>;
     const MapPin = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>;
@@ -47,6 +48,7 @@
     const XCircle = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>;
     const DownloadIcon = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
     const CopyIcon = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>;
+    const XIcon = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>;
 
     function App() {
       const [isOptimized, setIsOptimized] = useState(false);
@@ -54,20 +56,19 @@
       const [showCopyModal, setShowCopyModal] = useState(false);
       const [toastMsg, setToastMsg] = useState("");
 
-      // FOTOS DO ANTÔNIO
+      // FOTOS DE PERFIL (Antônio)
       const imgBefore = "https://drive.google.com/thumbnail?id=1oVlnmBTZLUafU_TOQ26-Zjz2XQb6JOLJ&sz=w800";
       const imgAfter = "https://drive.google.com/thumbnail?id=1AH0rJgBvi-VJD57QhcbwWZEp7yiOv91j&sz=w800";
       const imgAfterDownload = "https://drive.google.com/uc?export=download&id=1AH0rJgBvi-VJD57QhcbwWZEp7yiOv91j";
       
-      // CAPAS
-      const bgBefore = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII="; // Placeholder cinza para o vazio
-      const bgAfter = "https://drive.google.com/thumbnail?id=1TFGhDmkXPHxINwiQ2I3pNhcENQCyAN2p&sz=w1200"; 
+      // IMAGENS DE CAPA (Banner) - Atualizado com o link enviado
+      const bgBefore = "https://placehold.co/1200x360/e2e8f0/64748b?text=Sem+imagem+de+capa";
+      const bgAfter = "https://drive.google.com/thumbnail?id=1TFGhDmkXPHxINwiQ2I3pNhcENQCyAN2p&sz=w1200";
       const bgAfterDownload = "https://drive.google.com/uc?export=download&id=1TFGhDmkXPHxINwiQ2I3pNhcENQCyAN2p";
 
-      // LOGOS
+      // LOGO DA EMPRESA
       const logoHidrogest = "https://drive.google.com/thumbnail?id=1aWt-ZBZIvBdviJ3hoYVExMUoQlFEt15O&sz=w200";
-      const logoCemig = "https://upload.wikimedia.org/wikipedia/commons/4/4b/Cemig_logo.png"; // Placeholder genérico para ilustrar a cemig
-      
+      const logoCemig = "https://upload.wikimedia.org/wikipedia/commons/4/4b/Cemig_logo.png";
       const fallbackAvatar = "https://ui-avatars.com/api/?name=Antonio+Machado&size=200&background=0a66c2&color=fff";
 
       useEffect(() => {
@@ -76,6 +77,7 @@
         return () => clearTimeout(timer);
       }, [isOptimized]);
 
+      // Função segura de copiar para área de transferência
       const handleCopyText = (text) => {
         const textArea = document.createElement("textarea");
         textArea.value = text;
@@ -95,49 +97,96 @@
         setTimeout(() => setToastMsg(""), 3000);
       };
 
+      // Conteúdos sugeridos para cópia
       const copyTexts = {
+        nome: "Antônio José Machado",
         titulo: "Sócio Diretor & Engenheiro Responsável Técnico | Hidrometria | Hidrologia | Sedimentometria | Telemetria | Gestão de Recursos Hídricos",
-        sobre: `Engenheiro Civil com mais de 45 anos de sólida trajetória dedicada à hidrometria e gestão de recursos hídricos. Atuo como Sócio Diretor e Responsável Técnico da Hidrogest Engenharia, unindo profundo rigor técnico à liderança executiva em soluções ambientais de alta complexidade.\n\nEspecialista em Hidrometria, Hidrologia, Sedimentometria, Telemetria e Topobatimetria. Lidero operações críticas de monitoramento hidrossedimentológico e redes telemétricas, assegurando a conformidade regulatória (ANEEL/ANA) e viabilizando projetos essenciais para grandes players dos setores minerário e energético, como Vale e Fundação Renova.\n\nCom expressiva bagagem corporativa, construí uma carreira de 25 anos na CEMIG coordenando o setor de Hidrometria e a ampliação de redes estaduais. Participei dos estudos para implantação de algumas das maiores usinas hidrelétricas do país, contribuindo ativamente, com precisão e segurança técnica, para o planejamento hidroenergético brasileiro.`,
-        experienciaHidrogest: `Coordenação técnica e direção executiva de grandes projetos de monitoramento hidrossedimentológico (ex: Vale/Potamos no Rio Paraopeba).\nImplantação de redes de monitoramento para a Fundação Renova (Mariana, Dique S4, Lagoa Juparana) e atendimento a resoluções da ANEEL/ANA para diversas PCHs e UHEs.\nElaboração de curvas CAV e batimetria de reservatórios.`,
-        experienciaCemig: `Coordenação do setor de Hidrometria e ampliação da Rede Hidrometeorológica, sedimentométrica e telemétrica.\nParticipação nos estudos para implantação de grandes usinas (Nova Ponte, Miranda, Igarapava, Aimorés, Funil, Irapé).\nEstágio Internacional no USGS (EUA) em 1995.`,
-        formacao: `• Escola de Engenharia Kennedy (EEK)\nEngenharia Civil (1980)`,
-        competencias: `Hidrometria\nHidrologia\nSedimentometria\nTelemetria\nGestão de Recursos Hídricos\nTopobatimetria\nGestão de Projetos\nLiderança Executiva`
+        sobre: "Engenheiro Civil com mais de 45 anos de sólida trajetória dedicada à hidrometria e gestão de recursos hídricos. Atuo como Sócio Diretor e Responsável Técnico da Hidrogest Engenharia, unindo profundo rigor técnico à liderança executiva em soluções ambientais de alta complexidade.\n\nEspecialista em Hidrometria, Hidrologia, Sedimentometria, Telemetria e Topobatimetria. Lidero operações críticas de monitoramento hidrossedimentológico e redes telemétricas, assegurando a conformidade regulatória (ANEEL/ANA) e viabilizando projetos essenciais para grandes players dos setores minerário e energético, como Vale e Fundação Renova.\n\nCom expressiva bagagem corporativa, construí uma carreira de 25 anos na CEMIG coordenando o setor de Hidrometria e a ampliação de redes estaduais. Participei dos estudos para implantação de algumas das maiores usinas hidrelétricas do país, contribuindo ativamente, com precisão e segurança técnica, para o planejamento hidroenergético brasileiro.",
+        expHidrogest: "Coordenação técnica e direção executiva de grandes projetos de monitoramento hidrossedimentológico (ex: Vale/Potamos no Rio Paraopeba).\n\n• Implantação de redes de monitoramento para a Fundação Renova (Mariana, Dique S4, Lagoa Juparana) e atendimento a resoluções da ANEEL/ANA para diversas PCHs e UHEs.\n• Elaboração de curvas CAV e batimetria de reservatórios.",
+        expCemig: "Coordenação do setor de Hidrometria e ampliação da Rede Hidrometeorológica, sedimentométrica e telemétrica.\n\n• Participação nos estudos para implantação de grandes usinas (Nova Ponte, Miranda, Igarapava, Aimorés, Funil, Irapé).\n• Estágio Internacional no USGS (EUA) em 1995."
       };
 
-      const Highlight = ({ condition, isFixed, label, description, children, block = false, hideFixedBorder = false }) => {
+      // Botão individual e limpo de cópia rápida
+      const CopyInlineButton = ({ text, label = "Copiar" }) => (
+        <button
+          onClick={(e) => { e.stopPropagation(); handleCopyText(text); }}
+          className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-[#0a66c2] to-[#084e96] hover:from-[#084e96] hover:to-[#063970] text-white text-[11px] uppercase tracking-wider font-bold rounded-full transition-all shadow-[0_4px_10px_rgba(10,102,194,0.3)] hover:shadow-[0_6px_15px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 active:scale-95 shrink-0"
+          title={`Copiar ${label.toLowerCase()}`}
+        >
+          <CopyIcon size={14} /> {label}
+        </button>
+      );
+
+      // Componente de Destaque / Recomendação de modo amigável e expansível/fechável
+      const Highlight = ({ condition, isFixed, label, description, children, block = false, hideFixedBorder = false, position = 'inline' }) => {
+        const [isDismissed, setIsDismissed] = useState(false);
+
+        // Reseta o estado de "fechado" quando o usuário alternar as abas
+        useEffect(() => {
+          setIsDismissed(false);
+        }, [isFixed]);
+
         if (!condition) return <>{children}</>;
 
-        const baseStyles = block ? 'block' : 'inline-block';
+        const baseStyles = block ? 'block w-full' : 'inline-block';
         const fixedStyles = hideFixedBorder 
           ? 'border-transparent bg-transparent'
-          : 'border-green-400 bg-green-50/50 shadow-[0_0_15px_rgba(74,222,128,0.2)]';
-        const errorStyles = 'border-red-400 bg-red-50 animate-pulse-subtle shadow-[0_0_15px_rgba(248,113,113,0.3)]';
+          : 'border-green-400 bg-green-50/30 shadow-[0_0_15px_rgba(74,222,128,0.15)]';
+        
+        // Cores suaves e educadas (Laranja amigável ao invés de vermelho alerta)
+        const warningStyles = 'border-orange-300 bg-orange-50/40';
+        const isOverlay = position.startsWith('overlay');
+        const showBalloon = description && !isDismissed;
 
         return (
-          <div className={`relative group ${baseStyles} mb-1`}>
+          <div className={`relative ${baseStyles} ${isOverlay ? '' : (showBalloon ? 'mb-3' : '')}`}>
             <div className={`
               ${baseStyles} 
-              border-2 border-dashed rounded-lg p-1.5 -m-1.5 transition-all duration-700 ease-in-out
-              ${isFixed ? fixedStyles : errorStyles}
+              transition-all duration-700 ease-in-out
+              ${!isDismissed ? `border-2 border-dashed rounded-xl p-1 -m-1 ${isFixed ? fixedStyles : warningStyles}` : ''}
             `}>
               {children}
             </div>
             
-            <div className={`
-              absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 p-3 rounded-lg shadow-xl
-              transform transition-all duration-300 ease-out origin-bottom
-              opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 pointer-events-none
-              ${isFixed ? 'bg-green-800 text-white' : 'bg-red-700 text-white'}
-            `}>
-              <div className="flex items-start gap-2">
-                {isFixed ? <CheckCircle2 className="shrink-0 mt-0.5" size={16} /> : <AlertCircle className="shrink-0 mt-0.5" size={16} />}
-                <div>
-                  <p className="font-bold text-sm mb-1">{label}</p>
-                  {description && <p className="text-xs opacity-90 leading-tight">{description}</p>}
+            {showBalloon && (
+              <div className={`
+                ${isOverlay ? 'absolute z-40 shadow-xl backdrop-blur-md' : 'relative mt-3 shadow-md hover:shadow-lg'}
+                ${position === 'overlay-top-left' ? 'top-2 left-2 sm:top-4 sm:left-4 w-[calc(100%-50px)] sm:w-auto sm:max-w-xs' : ''}
+                ${!isOverlay ? 'w-full max-w-2xl' : ''}
+                p-3 sm:p-4 rounded-xl text-left border transition-all duration-500
+                ${isFixed ? 'bg-gradient-to-br from-green-50 to-emerald-50/90 border-green-200 text-green-900' : 'bg-gradient-to-br from-[#FFF9F2] to-orange-50/90 border-orange-200 text-orange-900'}
+              `}>
+                
+                {/* Botão X para fechar o balão individual */}
+                <button 
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsDismissed(true); }}
+                  className={`absolute top-2 right-2 p-1.5 rounded-full hover:bg-black/5 transition-colors z-50 ${isFixed ? 'text-green-700/50 hover:text-green-800' : 'text-orange-700/50 hover:text-orange-800'}`}
+                  title="Fechar dica"
+                >
+                  <XIcon size={14} />
+                </button>
+
+                {!isOverlay && (
+                  <div className={`absolute -top-2 left-6 w-4 h-4 rotate-45 border-l border-t
+                    ${isFixed ? 'bg-green-50 border-green-200' : 'bg-[#FFF9F2] border-orange-200'}
+                  `}></div>
+                )}
+
+                <div className="relative z-10 flex items-start gap-2.5 pr-6">
+                  <div className="mt-0.5 shrink-0">
+                    {isFixed ? <CheckCircle2 size={18} className="text-green-600" /> : <Info size={18} className="text-orange-500" />}
+                  </div>
+                  <div>
+                    <strong className={`block mb-1 text-[11px] sm:text-[12px] uppercase tracking-wider font-bold ${isFixed ? 'text-green-700' : 'text-orange-700'}`}>
+                      {label}
+                    </strong>
+                    <span className="text-[14px] sm:text-[14.5px] leading-relaxed opacity-90 block">
+                      {description}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rotate-45 ${isFixed ? 'bg-green-800' : 'bg-red-700'}`}></div>
-            </div>
+            )}
           </div>
         );
       };
@@ -146,45 +195,47 @@
         { id: 1, text: "Correção da Empresa Atual para Hidrogest", done: isOptimized },
         { id: 2, text: "Foto Corporativa de Sócio Diretor", done: isOptimized },
         { id: 3, text: "Inclusão de Banner Institucional", done: isOptimized },
-        { id: 4, text: "Resumo Objetivo e Autoridade", done: isOptimized },
-        { id: 5, text: "Inclusão de Contatos Visíveis", done: isOptimized },
+        { id: 4, text: "Resumo Objetivo e de Alta Autoridade", done: isOptimized },
       ];
 
       return (
         <div className="min-h-screen font-sans pb-16 selection:bg-blue-200">
           
-          <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 ${toastMsg ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
-            <div className="bg-green-800 text-white px-6 py-3 rounded-full shadow-2xl font-bold flex items-center gap-2">
+          {/* TOAST DE FEEDBACK DE CÓPIA */}
+          <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 ${toastMsg ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'}`}>
+            <div className="bg-gradient-to-r from-green-600 to-emerald-700 text-white px-6 py-3 rounded-full shadow-2xl shadow-green-900/20 font-bold flex items-center gap-2 border border-green-500/50">
               <CheckCircle2 size={20} />
               {toastMsg}
             </div>
           </div>
 
-          <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-md">
+          {/* HEADER PREMIUM FIXO */}
+          <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white shadow-sm">
             <div className="max-w-5xl mx-auto px-4 py-4">
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 
                 <div className="flex items-center gap-3">
-                  <div className="bg-[#0B3B59] text-white p-2.5 rounded-lg shadow-sm">
+                  <div className="bg-gradient-to-br from-[#0B3B59] to-[#062438] text-white p-2.5 rounded-xl shadow-lg shadow-[#0B3B59]/20">
                     <ShieldCheck size={24} />
                   </div>
                   <div>
-                    <h1 className="font-bold text-xl text-gray-900 leading-tight">Auditoria de Perfil</h1>
-                    <p className="text-sm text-gray-500">Diretoria: Antônio José Machado</p>
+                    <h1 className="font-bold text-xl text-gray-900 leading-tight">Sugestões de Melhoria - LinkedIn</h1>
+                    <p className="text-sm text-gray-500 font-medium">Diretoria: Antônio José Machado</p>
                   </div>
                 </div>
 
+                {/* Força de progresso da auditoria */}
                 <div className="flex-1 max-w-md w-full px-4">
                   <div className="flex justify-between text-sm mb-1.5 font-medium">
-                    <span className="text-gray-600">Força do Perfil</span>
-                    <span className={isOptimized ? "text-green-600" : "text-red-600"}>
-                      {isOptimized ? "Campeão Institucional (100%)" : "Desatualizado (20%)"}
+                    <span className="text-gray-600">Alinhamento Institucional</span>
+                    <span className={isOptimized ? "text-green-600 font-bold" : "text-orange-500 font-bold"}>
+                      {isOptimized ? "Otimizado (100%)" : "Há Oportunidades (20%)"}
                     </span>
                   </div>
-                  <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                  <div className="h-2.5 w-full bg-gray-200/50 rounded-full overflow-hidden shadow-inner backdrop-blur-sm">
                     <div 
                       className={`h-full rounded-full transition-all duration-1000 ease-out relative ${
-                        isOptimized ? "bg-green-500" : "bg-red-400"
+                        isOptimized ? "bg-gradient-to-r from-green-400 to-emerald-500 shadow-[0_0_10px_rgba(52,211,154,0.5)]" : "bg-gradient-to-r from-orange-400 to-amber-400"
                       }`}
                       style={{ width: animateProgress ? (isOptimized ? "100%" : "20%") : "0%" }}
                     >
@@ -193,114 +244,114 @@
                   </div>
                 </div>
 
-                <div className="flex bg-gray-100 p-1 rounded-lg border border-gray-200 shadow-inner">
+                {/* Seletor de visualização */}
+                <div className="flex bg-gray-100/80 backdrop-blur-sm p-1.5 rounded-xl border border-gray-200/60 shadow-inner">
                   <button
                     onClick={() => setIsOptimized(false)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
-                      !isOptimized ? 'bg-white shadow-sm text-red-600 ring-1 ring-gray-200' : 'text-gray-500 hover:text-gray-700'
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${
+                      !isOptimized ? 'bg-white shadow-md text-orange-600 ring-1 ring-gray-200/50 scale-100' : 'text-gray-500 hover:text-gray-700 scale-95'
                     }`}
                   >
-                    <XCircle size={16} className={!isOptimized ? "animate-pulse" : ""} />
+                    <Info size={16} className={!isOptimized ? "animate-pulse" : ""} />
                     Perfil Atual
                   </button>
                   <button
                     onClick={() => setIsOptimized(true)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
-                      isOptimized ? 'bg-[#0a66c2] shadow-md text-white ring-1 ring-blue-600' : 'text-gray-500 hover:text-gray-700'
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${
+                      isOptimized ? 'bg-gradient-to-r from-[#0a66c2] to-[#084e96] shadow-lg shadow-blue-900/20 text-white ring-1 ring-blue-600 scale-100' : 'text-gray-500 hover:text-gray-700 scale-95'
                     }`}
                   >
                     <CheckCircle2 size={16} />
-                    Otimizado
+                    Com Dicas
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
+          {/* GRID PRINCIPAL */}
           <div className="max-w-5xl mx-auto mt-8 px-4 grid grid-cols-1 lg:grid-cols-4 gap-6">
             
-            {}
+            {/* Coluna Esquerda - Checklist e Avisos */}
             <div className="lg:col-span-1 space-y-4">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 sticky top-28">
+              <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-5 sticky top-28">
                 <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Info size={18} className="text-[#0B3B59]" />
-                  Pontos Críticos
+                  <Info size={18} className="text-[#0a66c2]" />
+                  Dicas para o Perfil
                 </h3>
                 
                 <ul className="space-y-3">
                   {checklistItems.map(item => (
                     <li key={item.id} className="flex items-start gap-3 transition-all duration-300">
-                      <div className={`mt-0.5 rounded-full transition-colors duration-300 ${item.done ? 'text-green-500' : 'text-gray-300'}`}>
+                      <div className={`mt-0.5 rounded-full transition-colors duration-300 shadow-sm ${item.done ? 'text-green-500 bg-green-50' : 'text-gray-300 bg-gray-50'}`}>
                         <CheckCircle2 size={18} />
                       </div>
-                      <span className={`text-sm ${item.done ? 'text-gray-800 font-medium' : 'text-gray-500'}`}>
+                      <span className={`text-sm ${item.done ? 'text-gray-800 font-semibold' : 'text-gray-500 font-medium'}`}>
                         {item.text}
                       </span>
                     </li>
                   ))}
                 </ul>
 
-                <div className={`mt-6 p-4 rounded-lg text-sm transition-all duration-500 ${
-                  isOptimized ? 'bg-green-50 border border-green-200 text-green-800' : 'bg-red-50 border border-red-200 text-red-800'
+                <div className={`mt-6 p-4 rounded-xl text-sm transition-all duration-500 shadow-sm ${
+                  isOptimized ? 'bg-gradient-to-br from-green-50 to-emerald-50/50 border border-green-200/50 text-green-800' : 'bg-gradient-to-br from-orange-50 to-amber-50/50 border border-orange-200/50 text-orange-800'
                 }`}>
-                  <p className="font-bold mb-1">{isOptimized ? 'Autoridade Restaurada!' : 'Erro Institucional Grave:'}</p>
-                  <p>
+                  <p className="font-bold mb-1">{isOptimized ? 'Ficou ótimo!' : 'Apenas alguns refinamentos:'}</p>
+                  <p className="leading-relaxed">
                     {isOptimized 
-                      ? 'O perfil agora projeta perfeitamente a imagem de Sócio Diretor, destacando os 45 anos de experiência e a força da Hidrogest.' 
-                      : 'O perfil antigo indicava erroneamente que ele ainda trabalha na CEMIG e ocultava a posição dele como líder da Hidrogest há quase 20 anos.'}
+                      ? 'O perfil agora conta com a identidade da empresa e textos ainda mais organizados. Use os botões de "Copiar" ao lado dos textos para colar no seu LinkedIn.' 
+                      : 'Separamos dicas amigáveis de padronização visual e de texto para valorizar ainda mais a sua excelente liderança técnica na Hidrogest.'}
                   </p>
                 </div>
 
                 <div className={`mt-4 transition-all duration-500 overflow-hidden ${isOptimized ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'}`}>
                   <button 
                     onClick={() => setShowCopyModal(true)}
-                    className="w-full flex items-center justify-center gap-2 bg-[#0B3B59] hover:bg-[#082a40] text-white px-4 py-3 rounded-lg font-bold text-sm shadow-md transition-all hover:scale-[1.02]"
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#0B3B59] to-[#082a40] text-white px-4 py-3 rounded-xl font-bold text-sm shadow-lg shadow-[#0B3B59]/20 transition-all hover:scale-[1.02] hover:shadow-xl border border-[#0B3B59]/50"
                   >
                     <CopyIcon size={18} />
-                    Copiar Textos do Perfil
+                    Ver Todos os Textos
                   </button>
                 </div>
-
               </div>
             </div>
 
-            {}
+            {/* Coluna Direita - LinkedIn Preview */}
             <div className="lg:col-span-3 space-y-4 relative">
               
               <div className="absolute -right-2 -top-6 text-sm font-bold text-gray-400 flex items-center gap-1 uppercase tracking-wider">
-                Visão de Mercado / Parceiros <ChevronRight size={14}/>
+                Visão do Perfil <ChevronRight size={14}/>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden relative transition-all duration-500 hover:shadow-md">
+              {/* CARD PRINCIPAL (BANNER + AVATAR + NOME + TÍTULO) */}
+              <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white overflow-hidden relative transition-all duration-500 hover:shadow-lg">
                 
                 <Highlight 
                   condition={true} 
                   isFixed={isOptimized} 
                   hideFixedBorder={true}
-                  label={isOptimized ? "Banner Atualizado" : "Perfil Sem Identidade"} 
-                  description={isOptimized ? "A nova arte cria uma vitrine institucional forte para a empresa que ele fundou e dirige." : "O perfil não possuía imagem de capa, aparentando abandono."}
+                  position="overlay-top-left"
+                  label={isOptimized ? "Capa Atualizada" : "Oportunidade de Identidade Visual"} 
+                  description={isOptimized ? "A capa padrão da Hidrogest reforça a autoridade da marca e mostra que você lidera o time." : "Sugerimos utilizar a capa padrão da nossa empresa para passar uma imagem mais conectada com o time."}
                   block
                 >
-                  <div className="w-full relative overflow-hidden group/banner bg-gray-300" style={{ aspectRatio: '10/3', minHeight: '120px' }}>
-                    {/* Capa Antiga (Vazia/Cinza) */}
+                  <div className="w-full relative overflow-hidden group/banner bg-gray-100" style={{ aspectRatio: '10/3', minHeight: '120px' }}>
                     <img 
                       src={bgBefore} 
                       alt="Capa Antiga" 
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${isOptimized ? 'opacity-0' : 'opacity-100'}`}
                     />
                     
-                    {/* Nova Capa */}
                     <img 
                       src={bgAfter} 
                       alt="Capa Hidrogest" 
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${isOptimized ? 'opacity-100' : 'opacity-0'}`}
                     />
 
-                    {/* Botão de Download */}
                     <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 transition-all duration-500 z-10 ${isOptimized ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
                       <a 
                         href={bgAfterDownload} 
-                        download="Capa_Hidrogest_Antonio.jpg"
+                        download="Capa_Antonio_Hidrogest.png"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1.5 sm:gap-2 bg-white/95 hover:bg-white text-[#0B3B59] px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm shadow-lg transition-all border border-transparent hover:border-[#0B3B59] hover:scale-105"
@@ -322,27 +373,27 @@
                       condition={true} 
                       isFixed={isOptimized} 
                       hideFixedBorder={true}
-                      label={isOptimized ? "Foto Institucional de Diretoria" : "Foto Informal"}
-                      description={isOptimized ? "A postura mais séria e vestimenta formal transmitem o peso e a excelência técnica de um Sócio Diretor." : "A foto anterior era ótima, mas tinha um tom mais informal e descontraído, não projetando a total autoridade do cargo atual."}
+                      position="overlay-top-left"
+                      label={isOptimized ? "Foto Otimizada" : "Sugerimos uma Foto Corporativa"} 
+                      description={isOptimized ? "Uma foto corporativa formal, em fundo claro e neutro, comunica imensa autoridade executiva." : "A foto atual é descontraída. Uma pose corporativa com fundo neutro ajuda a projetar sua senioridade de Sócio Diretor."}
                     >
-                      <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full border-4 border-white bg-white shadow-md relative group/photo">
+                      <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full border-4 border-white bg-white shadow-lg relative group/photo">
                         <img 
                           src={isOptimized ? imgAfter : imgBefore} 
                           alt="Foto de perfil" 
-                          className="w-full h-full object-cover rounded-full transition-transform duration-700 group-hover/photo:scale-105"
+                          className="w-full h-full object-cover rounded-full transition-transform duration-700"
                           onError={(e) => { e.target.src = fallbackAvatar }}
                         />
                         <div className="absolute inset-0 ring-1 ring-black/10 rounded-full pointer-events-none"></div>
-                        
-                        {/* Botão de Download da Foto de Perfil */}
+
                         <div className={`absolute bottom-0 right-0 sm:bottom-1 sm:right-1 transition-all duration-500 z-30 ${isOptimized ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}>
                           <a 
                             href={imgAfterDownload} 
-                            download="Foto_Perfil_Antonio_Hidrogest.jpg"
+                            download="Foto_Antonio_Hidrogest.jpg"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center justify-center bg-white text-[#0B3B59] w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg border border-gray-200 hover:bg-gray-50 hover:scale-110 transition-all"
-                            title="Baixar foto de perfil"
+                            title="Baixar nova foto"
                           >
                             <DownloadIcon size={16} />
                           </a>
@@ -353,91 +404,70 @@
 
                   {}
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                    <div className="max-w-xl">
-                      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
-                        Antônio José Machado
-                      </h1>
+                    <div className="max-w-xl w-full">
+                      
+                      {/* NOME COMPLETO */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1.5">
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
+                          Antônio José Machado
+                        </h1>
+                        {isOptimized && <CopyInlineButton text={copyTexts.nome} label="Copiar Nome" />}
+                      </div>
 
-                      <div className="text-[16px] sm:text-[17px] text-gray-700 mt-1.5 leading-snug">
-                        <Highlight 
-                          condition={!isOptimized || isOptimized} 
-                          isFixed={isOptimized} 
-                          label={isOptimized ? "Título de Alto Escalão" : "Empresa Errada no Título"}
-                          description={isOptimized ? "Posiciona-o corretamente como o principal líder técnico e sócio da Hidrogest." : "O título antigo dizia ao mercado que ele ainda representava a CEMIG, o que é um erro de imagem grave para a Hidrogest."}
-                          block
-                        >
-                          {isOptimized 
-                            ? "Sócio Diretor & Engenheiro Responsável Técnico | Hidrometria | Hidrologia | Sedimentometria | Telemetria | Gestão de Recursos Hídricos" 
-                            : "Engenheiro de Planejamento Hidroenergético na Companhia Energética de Minas Gerais - CEMIG"}
-                        </Highlight>
+                      {/* TÍTULO PROFISSIONAL */}
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-1.5">
+                        <div className="text-[16px] sm:text-[17px] text-gray-700 leading-snug">
+                          <Highlight 
+                            condition={!isOptimized || isOptimized} 
+                            isFixed={isOptimized} 
+                            hideFixedBorder={true}
+                            label={isOptimized ? "Título Estratégico Alinhado" : "Dica de Posicionamento"}
+                            description={isOptimized ? "O título destaca perfeitamente sua atuação como principal líder técnico e sócio da Hidrogest." : "O título atual indica que você ainda atua integralmente na CEMIG. Vamos focar na Hidrogest?"}
+                          >
+                            {isOptimized ? "Sócio Diretor & Engenheiro Responsável Técnico | Hidrometria | Hidrologia | Sedimentometria | Telemetria | Gestão de Recursos Hídricos" : "Engenheiro de Planejamento Hidroenergético na Companhia Energética de Minas Gerais - CEMIG"}
+                          </Highlight>
+                        </div>
+                        {isOptimized && <CopyInlineButton text={copyTexts.titulo} label="Copiar Título" />}
                       </div>
 
                       <div className="text-gray-500 text-sm mt-3 flex items-center gap-1.5 font-medium">
                         <MapPin size={16} className="text-gray-400" /> Belo Horizonte, Minas Gerais, Brasil
                       </div>
                       
-                      <div className="mt-3">
-                        <Highlight 
-                          condition={true} 
-                          isFixed={isOptimized} 
-                          hideFixedBorder={true}
-                          label={isOptimized ? "Contatos Corporativos Visíveis" : "Sem Telefone Visível"}
-                          description={isOptimized ? "Adicionado o telefone para facilitar contato com grandes players e parceiros de negócio." : "Faltava um número direto para contato institucional."}
-                          block
-                        >
-                          {isOptimized ? (
-                            <div className="flex flex-wrap gap-3 sm:gap-4 text-sm font-semibold text-[#0a66c2] bg-blue-50/50 p-2 rounded-lg border border-blue-100 inline-flex">
-                              <span className="flex items-center gap-1.5 hover:underline cursor-pointer"><Mail size={16} /> antoniojose@hidrogestengenharia.com.br</span>
-                              <span className="flex items-center gap-1.5 hover:underline cursor-pointer"><Phone size={16} /> (31) 99104-8911</span>
-                            </div>
-                          ) : (
-                            <span className="text-sm font-semibold text-[#0a66c2] hover:underline cursor-pointer inline-flex items-center gap-1">
-                              Informações de contato <LinkIcon size={14}/>
-                            </span>
-                          )}
-                        </Highlight>
+                      {/* ÁREA DE CONTATOS (MANTIDA ORIGINAL E SEM RECOMENDAÇÕES DE ALTERAÇÃO) */}
+                      <div className="mt-3 flex flex-wrap gap-3 sm:gap-4 text-sm font-semibold text-[#0a66c2] inline-flex">
+                        <span className="flex items-center gap-1.5 hover:underline cursor-pointer"><Mail size={16} /> antoniojose@hidrogestengenharia.com.br</span>
+                        <span className="flex items-center gap-1.5 hover:underline cursor-pointer"><Phone size={16} /> (31) 99104-8911</span>
                       </div>
                     </div>
 
                     <div className="hidden md:flex flex-col gap-3 items-start sm:items-end w-56 shrink-0 mt-2">
-                      <Highlight 
-                        condition={!isOptimized || isOptimized} 
-                        isFixed={isOptimized} 
-                        hideFixedBorder={true}
-                        label={isOptimized ? "Empresa Atual Corrigida" : "Informação Ultrapassada"}
-                        description={isOptimized ? "Agora o perfil reflete o real pertencimento e direção dele na Hidrogest." : "Mostrava a CEMIG como a empresa na qual ele trabalhava atualmente."}
-                        block
-                      >
-                        {isOptimized ? (
-                          <div className="flex items-center gap-3 hover:underline cursor-pointer w-full justify-end">
-                            <span className="text-[15px] font-semibold text-gray-900 text-right leading-tight">Hidrogest Engenharia e Consultoria</span>
-                            <img src={logoHidrogest} alt="Hidrogest" className="w-10 h-10 shrink-0 object-contain bg-white rounded-md shadow-sm border border-gray-100" />
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-3 w-full justify-end opacity-75">
-                            <span className="text-[15px] font-semibold text-gray-900 text-right leading-tight">CEMIG</span>
-                            <img src={logoCemig} alt="Cemig" className="w-10 h-10 shrink-0 object-contain bg-white rounded-md shadow-sm border border-gray-100 p-1" />
-                          </div>
-                        )}
-                      </Highlight>
+                      <div className="flex items-center gap-3 w-full justify-end group cursor-pointer">
+                        <span className="text-[15px] font-semibold text-gray-900 text-right leading-tight group-hover:text-[#0a66c2] transition-colors">Hidrogest Engenharia e Consultoria</span>
+                        <img src={logoHidrogest} alt="Hidrogest" className="w-10 h-10 shrink-0 object-contain bg-white rounded-lg shadow-sm border border-gray-100 group-hover:scale-105 transition-transform" />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Sobre</h2>
+              {/* SEÇÃO SOBRE (O RESUMO DE AUTORIDADE) */}
+              <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+                  <h2 className="text-xl font-bold text-gray-900">Sobre</h2>
+                  {isOptimized && <CopyInlineButton text={copyTexts.sobre} label="Copiar Resumo" />}
+                </div>
                 <div className="text-[15px] text-gray-800 space-y-4 leading-relaxed">
                   <Highlight 
                     condition={!isOptimized || isOptimized} 
                     isFixed={isOptimized} 
-                    label={isOptimized ? "Resumo Poderoso e Objetivo" : "Perfil Vazio"}
-                    description={isOptimized ? "Texto vende o peso dos 45 anos de experiência e posiciona a Hidrogest como solucionadora de problemas de altíssimo nível." : "Não existia texto de resumo, perdendo a chance de introduzir a autoridade técnica dele."}
+                    hideFixedBorder={true}
+                    label={isOptimized ? "Resumo Completo e Imponente" : "Sugestão de Resumo"} 
+                    description={isOptimized ? "O novo texto valoriza seus 45 anos de atuação, sua sólida carreira técnica e a fundação da Hidrogest." : "O perfil antigo não possuía resumo, perdendo a oportunidade de ancorar a sua extrema autoridade profissional no mercado."}
                     block
                   >
                     {isOptimized ? (
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         <p>Engenheiro Civil com mais de 45 anos de sólida trajetória dedicada à hidrometria e gestão de recursos hídricos. Atuo como Sócio Diretor e Responsável Técnico da Hidrogest Engenharia, unindo profundo rigor técnico à liderança executiva em soluções ambientais de alta complexidade.</p>
                         <p>Especialista em Hidrometria, Hidrologia, Sedimentometria, Telemetria e Topobatimetria. Lidero operações críticas de monitoramento hidrossedimentológico e redes telemétricas, assegurando a conformidade regulatória (ANEEL/ANA) e viabilizando projetos essenciais para grandes players dos setores minerário e energético, como Vale e Fundação Renova.</p>
                         <p>Com expressiva bagagem corporativa, construí uma carreira de 25 anos na CEMIG coordenando o setor de Hidrometria e a ampliação de redes estaduais. Participei dos estudos para implantação de algumas das maiores usinas hidrelétricas do país, contribuindo ativamente, com precisão e segurança técnica, para o planejamento hidroenergético brasileiro.</p>
@@ -449,30 +479,36 @@
                 </div>
               </div>
 
-              {}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+              {/* SEÇÃO EXPERIÊNCIA */}
+              <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
                 <h2 className="text-xl font-bold text-gray-900 mb-8">Experiência</h2>
 
-                {/* Experiência HIDROGEST */}
-                <div className="flex gap-3 sm:gap-4">
-                  <img src={logoHidrogest} alt="Hidrogest" className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 object-contain bg-white shadow-sm rounded-md border border-gray-100 mt-1 z-10 relative" />
+                {/* EXPERIÊNCIA HIDROGEST */}
+                <div className="flex gap-3 sm:gap-4 group/exp">
+                  <img src={logoHidrogest} alt="Hidrogest" className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 object-contain bg-white shadow-md rounded-lg border border-gray-100 mt-1 z-10 relative group-hover/exp:scale-105 transition-transform" />
                   <div className="flex-1 pb-8 relative">
-                    <div className="absolute top-12 bottom-0 left-[-26px] sm:left-[-38px] w-0.5 bg-gray-200"></div>
+                    <div className="absolute top-12 bottom-0 left-[-26px] sm:left-[-38px] w-0.5 bg-gradient-to-b from-gray-200 to-gray-100"></div>
                     
-                    <Highlight 
-                      condition={!isOptimized || isOptimized} 
-                      isFixed={isOptimized} 
-                      hideFixedBorder={true}
-                      label={isOptimized ? "Cargo Atualizado: Sócio Diretor" : "Cargo Genérico e Encerrado"}
-                      description={isOptimized ? "O currículo agora mostra o status atual de fundação/diretoria (2006 até Hoje)." : "Constava apenas como 'Engenheiro' e com fim em 2015, indicando que ele havia saído da empresa."}
-                    >
-                      <h3 className="text-[16px] sm:text-[17px] font-bold text-gray-900">
-                        {isOptimized ? "Sócio Diretor e Responsável Técnico" : "Engenheiro"}
-                      </h3>
-                    </Highlight>
-                    <div className="text-[14px] sm:text-[15px] text-gray-900 font-medium mt-0.5">Hidrogest Engenharia e Consultoria</div>
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                      <div>
+                        <Highlight 
+                          condition={!isOptimized || isOptimized} 
+                          isFixed={isOptimized} 
+                          hideFixedBorder={true}
+                          label={isOptimized ? "Cargo Atualizado: Sócio Diretor" : "Dica de Posição"}
+                          description={isOptimized ? "O currículo agora expõe seu cargo de direção desde 2006 de forma contínua." : "Constava apenas como engenheiro e indicava que você havia saído em 2015."}
+                        >
+                          <h3 className="text-[16px] sm:text-[17px] font-bold text-gray-900">
+                            {isOptimized ? "Sócio Diretor e Responsável Técnico" : "Engenheiro"}
+                          </h3>
+                        </Highlight>
+                        <div className="text-[14px] sm:text-[15px] text-gray-900 font-medium mt-0.5">Hidrogest Engenharia e Consultoria</div>
+                      </div>
+                      {isOptimized && <CopyInlineButton text={copyTexts.expHidrogest} label="Copiar Hidrogest" />}
+                    </div>
+                    
                     <div className="text-[14px] sm:text-[15px] text-gray-500 mt-1">
-                      {isOptimized ? "2006 - o momento · 18 anos" : "jan de 2006 - set de 2015 · 9 anos 9 meses"}
+                      {isOptimized ? "2006 - o momento · 20 anos" : "jan de 2006 - set de 2015 · 9 anos 9 meses"}
                     </div>
                     <div className="text-[14px] sm:text-[15px] text-gray-500">Belo Horizonte, Minas Gerais, Brasil</div>
                     
@@ -480,7 +516,7 @@
                       {isOptimized && (
                         <div>
                           <p>Coordenação técnica e direção executiva de grandes projetos de monitoramento hidrossedimentológico (ex: Vale/Potamos no Rio Paraopeba).</p>
-                          <ul className="list-disc pl-5 space-y-1.5 marker:text-gray-400">
+                          <ul className="list-disc pl-5 mt-2 space-y-1.5 marker:text-gray-400">
                             <li>Implantação de redes de monitoramento para a Fundação Renova (Mariana, Dique S4, Lagoa Juparana).</li>
                             <li>Atendimento a resoluções da ANEEL/ANA para diversas PCHs e UHEs.</li>
                             <li>Elaboração de curvas CAV e batimetria de reservatórios.</li>
@@ -491,30 +527,37 @@
                   </div>
                 </div>
 
-                {/* Experiência CEMIG */}
-                <div className="flex gap-3 sm:gap-4 mt-2">
-                  <img src={logoCemig} alt="CEMIG" className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 object-contain bg-white shadow-sm rounded-md border border-gray-100 p-1 mt-1 z-10 relative" />
-                  <div className="flex-1 pb-2 relative">
+                {/* EXPERIÊNCIA CEMIG */}
+                <div className="flex gap-3 sm:gap-4 mt-2 group/exp">
+                  <img src={logoCemig} alt="CEMIG" className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 object-contain bg-white shadow-md rounded-lg border border-gray-100 mt-1 z-10 relative group-hover/exp:scale-105 transition-transform p-1" />
+                  <div className="flex-1 pb-2">
                     
-                    <Highlight 
-                      condition={!isOptimized || isOptimized} 
-                      isFixed={isOptimized} 
-                      hideFixedBorder={true}
-                      label={isOptimized ? "Data Corrigida (Trabalho Anterior)" : "Data Incorreta (Como Emprego Atual)"}
-                      description={isOptimized ? "A CEMIG fica no seu devido lugar: uma imensa bagagem que ele traz para a Hidrogest, mas que já foi encerrada em 2005." : "O LinkedIn considerava a CEMIG como o emprego onde ele passa as 8 horas do dia dele hoje."}
-                    >
-                      <h3 className="text-[16px] sm:text-[17px] font-bold text-gray-900">Engenheiro de Planejamento Hidroenergético</h3>
-                    </Highlight>
-                    <div className="text-[14px] sm:text-[15px] text-gray-900 font-medium mt-0.5">Companhia Energética de Minas Gerais - CEMIG</div>
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                      <div>
+                        <Highlight 
+                          condition={!isOptimized || isOptimized} 
+                          isFixed={isOptimized} 
+                          hideFixedBorder={true}
+                          label={isOptimized ? "Data Corrigida (Trabalho Anterior)" : "Dica de Cronologia"}
+                          description={isOptimized ? "Definimos o período correto da CEMIG, mostrando que foi uma bagagem encerrada em 2005." : "O LinkedIn sugeria que você ainda passa seu dia de trabalho na CEMIG como emprego atual."}
+                        >
+                          <h3 className="text-[16px] sm:text-[17px] font-bold text-gray-900">Engenheiro de Planejamento Hidroenergético</h3>
+                        </Highlight>
+                        <div className="text-[14px] sm:text-[15px] text-gray-900 font-medium mt-0.5">Companhia Energética de Minas Gerais - CEMIG</div>
+                      </div>
+                      {isOptimized && <CopyInlineButton text={copyTexts.expCemig} label="Copiar CEMIG" />}
+                    </div>
+                    
                     <div className="text-[14px] sm:text-[15px] text-gray-500 mt-1">
                       {isOptimized ? "1980 - 2005 · 25 anos" : "jan de 2005 - o momento · 21 anos 5 meses"}
                     </div>
+                    <div className="text-[14px] sm:text-[15px] text-gray-500">Belo Horizonte, Minas Gerais, Brasil</div>
                     
-                    <div className="mt-4 text-[14px] sm:text-[15px] text-gray-800 leading-relaxed space-y-3">
+                    <div className="mt-4 text-[14px] sm:text-[15px] text-gray-800 leading-relaxed">
                       {isOptimized && (
                         <div>
                           <p>Coordenação do setor de Hidrometria e ampliação da Rede Hidrometeorológica, sedimentométrica e telemétrica.</p>
-                          <ul className="list-disc pl-5 space-y-1.5 marker:text-gray-400">
+                          <ul className="list-disc pl-5 mt-2 space-y-1.5 marker:text-gray-400">
                             <li>Participação nos estudos para implantação de grandes usinas (Nova Ponte, Miranda, Igarapava, Aimorés, Funil, Irapé).</li>
                             <li>Estágio Internacional no USGS (EUA) em 1995.</li>
                           </ul>
@@ -525,59 +568,75 @@
                 </div>
               </div>
 
-              {}
+              {/* COMPETÊNCIAS */}
               {isOptimized && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Competências</h2>
                   <div className="flex flex-wrap gap-2">
                     {["Hidrometria", "Hidrologia", "Sedimentometria", "Telemetria", "Gestão de Recursos Hídricos", "Topobatimetria", "Gestão de Projetos", "Liderança Executiva"].map(comp => (
-                      <span key={comp} className="bg-[#f3f2ef] text-gray-800 px-4 py-1.5 rounded-full text-sm font-semibold border border-gray-300">{comp}</span>
+                      <span key={comp} className="bg-slate-100 text-slate-800 px-4 py-1.5 rounded-full text-sm font-semibold border border-slate-200">{comp}</span>
                     ))}
                   </div>
                 </div>
               )}
-              
+
             </div>
           </div>
 
-          {}
+          {/* MODAL COPIAR TEXTOS */}
           {showCopyModal && (
-            <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
-              <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto flex flex-col">
+            <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+              <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto flex flex-col border border-white">
                 
-                <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+                <div className="sticky top-0 bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
                   <h2 className="text-xl font-bold text-[#0B3B59] flex items-center gap-2">
-                    <CopyIcon size={20} /> Textos para o LinkedIn
+                    <CopyIcon size={20} className="text-[#0a66c2]" /> Textos Sugeridos para o LinkedIn
                   </h2>
-                  <button onClick={() => setShowCopyModal(false)} className="text-gray-500 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-all">
+                  <button onClick={() => setShowCopyModal(false)} className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-all">
                     <XCircle size={24} />
                   </button>
                 </div>
 
                 <div className="p-6 space-y-6">
-                  <p className="text-sm text-gray-600">Clique no botão "Copiar" para colar as informações no perfil da diretoria de forma rápida e segura.</p>
+                  <p className="text-sm text-gray-600 font-medium">Use os botões abaixo para copiar rapidamente cada texto reestruturado.</p>
                   
-                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 relative group">
-                    <h3 className="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">Título Profissional</h3>
-                    <p className="text-gray-800 bg-white p-3 rounded border border-gray-200">{copyTexts.titulo}</p>
+                  <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50 relative group">
+                    <h3 className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Nome Completo</h3>
+                    <p className="text-gray-800 bg-white p-3 rounded-lg border border-gray-200 shadow-sm font-medium">{copyTexts.nome}</p>
+                    <button onClick={() => handleCopyText(copyTexts.nome)} className="mt-3 text-sm font-bold text-[#0a66c2] hover:text-[#084e96] flex items-center gap-1 transition-all">
+                      <CopyIcon size={16} /> Copiar Nome
+                    </button>
+                  </div>
+
+                  <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50 relative group">
+                    <h3 className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Título Profissional</h3>
+                    <p className="text-gray-800 bg-white p-3 rounded-lg border border-gray-200 shadow-sm font-medium">{copyTexts.titulo}</p>
                     <button onClick={() => handleCopyText(copyTexts.titulo)} className="mt-3 text-sm font-bold text-[#0a66c2] hover:text-[#084e96] flex items-center gap-1 transition-all">
                       <CopyIcon size={16} /> Copiar Título
                     </button>
                   </div>
 
-                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 relative group">
-                    <h3 className="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">Resumo (Sobre)</h3>
-                    <p className="text-gray-800 bg-white p-3 rounded border border-gray-200 whitespace-pre-wrap">{copyTexts.sobre}</p>
+                  <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50 relative group">
+                    <h3 className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Resumo (Sobre)</h3>
+                    <p className="text-gray-800 bg-white p-3 rounded-lg border border-gray-200 shadow-sm whitespace-pre-wrap">{copyTexts.sobre}</p>
                     <button onClick={() => handleCopyText(copyTexts.sobre)} className="mt-3 text-sm font-bold text-[#0a66c2] hover:text-[#084e96] flex items-center gap-1 transition-all">
                       <CopyIcon size={16} /> Copiar Sobre
                     </button>
                   </div>
 
-                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 relative group">
-                    <h3 className="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wider">Experiência (Hidrogest)</h3>
-                    <p className="text-gray-800 bg-white p-3 rounded border border-gray-200 whitespace-pre-wrap">{copyTexts.experienciaHidrogest}</p>
-                    <button onClick={() => handleCopyText(copyTexts.experienciaHidrogest)} className="mt-3 text-sm font-bold text-[#0a66c2] hover:text-[#084e96] flex items-center gap-1 transition-all">
-                      <CopyIcon size={16} /> Copiar Experiência
+                  <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50 relative group">
+                    <h3 className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Experiência (Hidrogest)</h3>
+                    <p className="text-gray-800 bg-white p-3 rounded-lg border border-gray-200 shadow-sm whitespace-pre-wrap">{copyTexts.expHidrogest}</p>
+                    <button onClick={() => handleCopyText(copyTexts.expHidrogest)} className="mt-3 text-sm font-bold text-[#0a66c2] hover:text-[#084e96] flex items-center gap-1 transition-all">
+                      <CopyIcon size={16} /> Copiar Hidrogest
+                    </button>
+                  </div>
+
+                  <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50 relative group">
+                    <h3 className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Experiência (CEMIG)</h3>
+                    <p className="text-gray-800 bg-white p-3 rounded-lg border border-gray-200 shadow-sm whitespace-pre-wrap">{copyTexts.expCemig}</p>
+                    <button onClick={() => handleCopyText(copyTexts.expCemig)} className="mt-3 text-sm font-bold text-[#0a66c2] hover:text-[#084e96] flex items-center gap-1 transition-all">
+                      <CopyIcon size={16} /> Copiar CEMIG
                     </button>
                   </div>
 
@@ -590,6 +649,7 @@
       );
     }
 
+    // Inicializando o React no DOM
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
