@@ -51,6 +51,94 @@
     const XIcon = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>;
     const ArrowLeft = ({ size = 24, className = "" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>;
 
+    // --- Componentes Auxiliares (Definidos fora do App para evitar re-renderizações infinitas) ---
+    const CopyInlineButton = ({ text, label = "Copiar", onCopy }) => (
+      <button
+        onClick={(e) => { e.stopPropagation(); onCopy(text); }}
+        className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-[#0a66c2] to-[#084e96] hover:from-[#084e96] hover:to-[#063970] text-white text-[11px] uppercase tracking-wider font-bold rounded-full transition-all shadow-[0_4px_10px_rgba(10,102,194,0.3)] hover:shadow-[0_6px_15px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 active:scale-95 shrink-0"
+        title={`Copiar ${label.toLowerCase()}`}
+      >
+        <CopyIcon size={14} /> {label}
+      </button>
+    );
+
+    const Highlight = ({ condition, isFixed, label, description, children, block = false, hideFixedBorder = false, position = 'inline' }) => {
+      const [isDismissed, setIsDismissed] = useState(false);
+
+      useEffect(() => {
+        setIsDismissed(false);
+      }, [isFixed]);
+
+      if (!condition) return <>{children}</>;
+
+      const baseStyles = block ? 'block w-full' : 'inline-block';
+      const fixedStyles = hideFixedBorder 
+        ? 'border-transparent bg-transparent'
+        : 'border-green-400 bg-green-50/30 shadow-[0_0_15px_rgba(74,222,128,0.15)]';
+      
+      const warningStyles = 'border-orange-300 bg-orange-50/40';
+      const isAbsolute = position !== 'inline';
+      const showBalloon = description && !isDismissed;
+
+      return (
+        <div className={`relative ${baseStyles} ${!isAbsolute ? (showBalloon ? 'mb-2' : '') : ''}`}>
+          <div className={`
+            ${baseStyles} 
+            transition-all duration-700 ease-in-out
+            ${!isDismissed ? `border-2 border-dashed rounded-xl p-1 -m-1 ${isFixed ? fixedStyles : warningStyles}` : ''}
+          `}>
+            {children}
+          </div>
+          
+          {showBalloon && (
+            <div className={`
+              ${isAbsolute ? 'absolute z-[60] shadow-2xl backdrop-blur-md' : 'relative mt-2 shadow-md hover:shadow-lg'}
+              ${position === 'overlay-top-left' ? 'top-2 left-2 w-48 sm:w-56' : ''}
+              ${position === 'avatar-tooltip' ? 'top-[105%] left-1/2 -translate-x-1/2 sm:top-2 sm:translate-x-0 sm:left-[110%] sm:ml-2 w-52 sm:w-60' : ''}
+              ${!isAbsolute ? 'w-full max-w-xl' : ''}
+              p-2.5 rounded-xl text-left border transition-all duration-500
+              ${isFixed ? 'bg-gradient-to-br from-green-50 to-emerald-50/95 border-green-200 text-green-900' : 'bg-gradient-to-br from-[#FFF9F2] to-orange-50/95 border-orange-200 text-orange-900'}
+            `}>
+              
+              <button 
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsDismissed(true); }}
+                className={`absolute top-1 right-1 p-1 rounded-full hover:bg-black/5 transition-colors z-50 ${isFixed ? 'text-green-700/50 hover:text-green-800' : 'text-orange-700/50 hover:text-orange-800'}`}
+                title="Fechar dica"
+              >
+                <XIcon size={12} />
+              </button>
+
+              {!isAbsolute && (
+                <div className={`absolute -top-1.5 left-6 w-3 h-3 rotate-45 border-l border-t
+                  ${isFixed ? 'bg-green-50 border-green-200' : 'bg-[#FFF9F2] border-orange-200'}
+                `}></div>
+              )}
+
+              {position === 'avatar-tooltip' && (
+                <div className={`absolute -top-1.5 left-1/2 -translate-x-1/2 sm:top-6 sm:-left-1.5 sm:translate-x-0 w-3 h-3 rotate-45 border-l border-t sm:border-t-0 sm:border-b
+                  ${isFixed ? 'bg-green-50 border-green-200' : 'bg-[#FFF9F2] border-orange-200'}
+                `}></div>
+              )}
+
+              <div className="relative z-10 flex items-start gap-1.5 pr-4">
+                <div className="mt-0.5 shrink-0">
+                  {isFixed ? <CheckCircle2 size={14} className="text-green-600" /> : <Info size={14} className="text-orange-500" />}
+                </div>
+                <div>
+                  <strong className={`block mb-0.5 text-[10px] uppercase tracking-wider font-extrabold ${isFixed ? 'text-green-700' : 'text-orange-700'}`}>
+                    {label}
+                  </strong>
+                  <span className="text-[11.5px] leading-tight opacity-90 block">
+                    {description}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
     function App() {
       const [isOptimized, setIsOptimized] = useState(false);
       const [animateProgress, setAnimateProgress] = useState(false);
@@ -105,91 +193,6 @@
         sobre: "Engenheiro Civil com mais de 45 anos de sólida trajetória dedicada à hidrometria e gestão de recursos hídricos. Atuo como Sócio Diretor e Responsável Técnico da Hidrogest Engenharia, unindo profundo rigor técnico à liderança executiva em soluções ambientais de alta complexidade.\n\nEspecialista em Hidrometria, Hidrologia, Sedimentometria, Telemetria e Topobatimetria. Lidero operações críticas de monitoramento hidrossedimentológico e redes telemétricas, assegurando a conformidade regulatória (ANEEL/ANA) e viabilizando projetos essenciais para grandes players dos setores minerário e energético, como Vale e Fundação Renova.\n\nCom expressiva bagagem corporativa, construí uma carreira de 25 anos na CEMIG coordenando o setor de Hidrometria e a ampliação de redes estaduais. Participei dos estudos para implantação de algumas das maiores usinas hidrelétricas do país, contribuindo ativamente, com precisão e segurança técnica, para o planejamento hidroenergético brasileiro.",
         expHidrogest: "Coordenação técnica e direção executiva de grandes projetos de monitoramento hidrossedimentológico (ex: Vale/Potamos no Rio Paraopeba).\n\n• Implantação de redes de monitoramento para a Fundação Renova (Mariana, Dique S4, Lagoa Juparana) e atendimento a resoluções da ANEEL/ANA para diversas PCHs e UHEs.\n• Elaboração de curvas CAV e batimetria de reservatórios.",
         expCemig: "Coordenação do setor de Hidrometria e ampliação da Rede Hidrometeorológica, sedimentométrica e telemétrica.\n\n• Participação nos estudos para implantação de grandes usinas (Nova Ponte, Miranda, Igarapava, Aimorés, Funil, Irapé).\n• Estágio Internacional no USGS (EUA) em 1995."
-      };
-
-      // Botão individual e limpo de cópia rápida
-      const CopyInlineButton = ({ text, label = "Copiar" }) => (
-        <button
-          onClick={(e) => { e.stopPropagation(); handleCopyText(text); }}
-          className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-[#0a66c2] to-[#084e96] hover:from-[#084e96] hover:to-[#063970] text-white text-[11px] uppercase tracking-wider font-bold rounded-full transition-all shadow-[0_4px_10px_rgba(10,102,194,0.3)] hover:shadow-[0_6px_15px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 active:scale-95 shrink-0"
-          title={`Copiar ${label.toLowerCase()}`}
-        >
-          <CopyIcon size={14} /> {label}
-        </button>
-      );
-
-      // Componente de Destaque / Recomendação de modo amigável e expansível/fechável
-      const Highlight = ({ condition, isFixed, label, description, children, block = false, hideFixedBorder = false, position = 'inline' }) => {
-        const [isDismissed, setIsDismissed] = useState(false);
-
-        // Reseta o estado de "fechado" quando o usuário alternar as abas
-        useEffect(() => {
-          setIsDismissed(false);
-        }, [isFixed]);
-
-        if (!condition) return <>{children}</>;
-
-        const baseStyles = block ? 'block w-full' : 'inline-block';
-        const fixedStyles = hideFixedBorder 
-          ? 'border-transparent bg-transparent'
-          : 'border-green-400 bg-green-50/30 shadow-[0_0_15px_rgba(74,222,128,0.15)]';
-        
-        // Cores suaves e educadas (Laranja amigável ao invés de vermelho alerta)
-        const warningStyles = 'border-orange-300 bg-orange-50/40';
-        const isOverlay = position.startsWith('overlay');
-        const showBalloon = description && !isDismissed;
-
-        return (
-          <div className={`relative ${baseStyles} ${isOverlay ? '' : (showBalloon ? 'mb-3' : '')}`}>
-            <div className={`
-              ${baseStyles} 
-              transition-all duration-700 ease-in-out
-              ${!isDismissed ? `border-2 border-dashed rounded-xl p-1 -m-1 ${isFixed ? fixedStyles : warningStyles}` : ''}
-            `}>
-              {children}
-            </div>
-            
-            {showBalloon && (
-              <div className={`
-                ${isOverlay ? 'absolute z-40 shadow-xl backdrop-blur-md' : 'relative mt-3 shadow-md hover:shadow-lg'}
-                ${position === 'overlay-top-left' ? 'top-2 left-2 sm:top-4 sm:left-4 w-[calc(100%-50px)] sm:w-auto sm:max-w-xs' : ''}
-                ${!isOverlay ? 'w-full max-w-2xl' : ''}
-                p-3 sm:p-4 rounded-xl text-left border transition-all duration-500
-                ${isFixed ? 'bg-gradient-to-br from-green-50 to-emerald-50/90 border-green-200 text-green-900' : 'bg-gradient-to-br from-[#FFF9F2] to-orange-50/90 border-orange-200 text-orange-900'}
-              `}>
-                
-                {/* Botão X para fechar o balão individual */}
-                <button 
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsDismissed(true); }}
-                  className={`absolute top-2 right-2 p-1.5 rounded-full hover:bg-black/5 transition-colors z-50 ${isFixed ? 'text-green-700/50 hover:text-green-800' : 'text-orange-700/50 hover:text-orange-800'}`}
-                  title="Fechar dica"
-                >
-                  <XIcon size={14} />
-                </button>
-
-                {!isOverlay && (
-                  <div className={`absolute -top-2 left-6 w-4 h-4 rotate-45 border-l border-t
-                    ${isFixed ? 'bg-green-50 border-green-200' : 'bg-[#FFF9F2] border-orange-200'}
-                  `}></div>
-                )}
-
-                <div className="relative z-10 flex items-start gap-2.5 pr-6">
-                  <div className="mt-0.5 shrink-0">
-                    {isFixed ? <CheckCircle2 size={18} className="text-green-600" /> : <Info size={18} className="text-orange-500" />}
-                  </div>
-                  <div>
-                    <strong className={`block mb-1 text-[11px] sm:text-[12px] uppercase tracking-wider font-bold ${isFixed ? 'text-green-700' : 'text-orange-700'}`}>
-                      {label}
-                    </strong>
-                    <span className="text-[14px] sm:text-[14.5px] leading-relaxed opacity-90 block">
-                      {description}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        );
       };
 
       const checklistItems = [
@@ -398,7 +401,7 @@
                       condition={true} 
                       isFixed={isOptimized} 
                       hideFixedBorder={true}
-                      position="overlay-top-left"
+                      position="avatar-tooltip"
                       label={isOptimized ? "Foto Otimizada" : "Sugerimos uma Foto Corporativa"} 
                       description={isOptimized ? "Uma foto corporativa formal, em fundo claro e neutro, comunica imensa autoridade executiva." : "A foto atual é descontraída. Uma pose corporativa com fundo neutro ajuda a projetar sua senioridade de Sócio Diretor."}
                     >
@@ -436,7 +439,7 @@
                         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
                           Antônio José Machado
                         </h1>
-                        {isOptimized && <CopyInlineButton text={copyTexts.nome} label="Copiar Nome" />}
+                        {isOptimized && <CopyInlineButton text={copyTexts.nome} label="Copiar Nome" onCopy={handleCopyText} />}
                       </div>
 
                       {/* TÍTULO PROFISSIONAL */}
@@ -452,7 +455,7 @@
                             {isOptimized ? "Sócio Diretor & Engenheiro Responsável Técnico | Hidrometria | Hidrologia | Sedimentometria | Telemetria | Gestão de Recursos Hídricos" : "Engenheiro de Planejamento Hidroenergético na Companhia Energética de Minas Gerais - CEMIG"}
                           </Highlight>
                         </div>
-                        {isOptimized && <CopyInlineButton text={copyTexts.titulo} label="Copiar Título" />}
+                        {isOptimized && <CopyInlineButton text={copyTexts.titulo} label="Copiar Título" onCopy={handleCopyText} />}
                       </div>
 
                       <div className="text-gray-500 text-sm mt-3 flex items-center gap-1.5 font-medium">
@@ -480,7 +483,7 @@
               <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
                   <h2 className="text-xl font-bold text-gray-900">Sobre</h2>
-                  {isOptimized && <CopyInlineButton text={copyTexts.sobre} label="Copiar Resumo" />}
+                  {isOptimized && <CopyInlineButton text={copyTexts.sobre} label="Copiar Resumo" onCopy={handleCopyText} />}
                 </div>
                 <div className="text-[15px] text-gray-800 space-y-4 leading-relaxed">
                   <Highlight 
@@ -529,7 +532,7 @@
                         </Highlight>
                         <div className="text-[14px] sm:text-[15px] text-gray-900 font-medium mt-0.5">Hidrogest Engenharia e Consultoria</div>
                       </div>
-                      {isOptimized && <CopyInlineButton text={copyTexts.expHidrogest} label="Copiar Hidrogest" />}
+                      {isOptimized && <CopyInlineButton text={copyTexts.expHidrogest} label="Copiar Hidrogest" onCopy={handleCopyText} />}
                     </div>
                     
                     <div className="text-[14px] sm:text-[15px] text-gray-500 mt-1">
@@ -570,7 +573,7 @@
                         </Highlight>
                         <div className="text-[14px] sm:text-[15px] text-gray-900 font-medium mt-0.5">Companhia Energética de Minas Gerais - CEMIG</div>
                       </div>
-                      {isOptimized && <CopyInlineButton text={copyTexts.expCemig} label="Copiar CEMIG" />}
+                      {isOptimized && <CopyInlineButton text={copyTexts.expCemig} label="Copiar CEMIG" onCopy={handleCopyText} />}
                     </div>
                     
                     <div className="text-[14px] sm:text-[15px] text-gray-500 mt-1">
